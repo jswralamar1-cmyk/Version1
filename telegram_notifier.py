@@ -13,12 +13,16 @@ class TelegramNotifier:
     إرسال الرسائل عبر Telegram Bot
     """
     
-    def __init__(self):
+    def __init__(self, bot_token: Optional[str] = None, chat_id: Optional[str] = None):
         """
         تهيئة البوت
+        
+        Args:
+            bot_token: توكن البوت (اختياري)
+            chat_id: معرف المحادثة (اختياري)
         """
-        self.bot_token = config.TELEGRAM_BOT_TOKEN
-        self.chat_id = config.TELEGRAM_CHAT_ID
+        self.bot_token = bot_token or config.TELEGRAM_BOT_TOKEN
+        self.chat_id = chat_id or config.TELEGRAM_CHAT_ID
         self.base_url = f"https://api.telegram.org/bot{self.bot_token}"
     
     def send_message(self, text: str, parse_mode: str = "HTML") -> bool:
@@ -56,22 +60,67 @@ class TelegramNotifier:
             print(f"❌ خطأ في إرسال الرسالة: {e}")
             return False
     
-    def send_signal(self, signal: Dict) -> bool:
+    def send_ready_alert(self, signal: Dict) -> bool:
         """
-        إرسال إشارة تداول
+        إرسال تنبيه استعداد
         
         Args:
-            signal: قاموس يحتوي على معلومات الإشارة
+            signal: معلومات الإشارة
         
         Returns:
             True إذا تم الإرسال بنجاح
         """
-        # تحديد الأيقونة حسب نوع الإشارة
-        icon = self._get_signal_icon(signal['type'])
+        icon = '🟡'  # أصفر
+        direction_icon = '🔼' if signal['direction'] == 'BUY' else '🔽'
         
-        # تنسيق الرسالة
-        message = self._format_signal_message(signal, icon)
+        message = f"""
+{icon} <b>استعداد {signal['direction']}</b> {direction_icon}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💱 <b>الزوج:</b> {signal['symbol']}
+💰 <b>السعر:</b> {signal['price']:.5f}
+⏰ <b>الوقت:</b> {signal.get('timestamp', datetime.now()).strftime('%H:%M:%S')}
+
+📊 <b>التحليل:</b>
+{signal['reason']}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🤖 <i>Manus Trading Bot</i>
+"""
+        return self.send_message(message)
+    
+    def send_entry_alert(self, signal: Dict) -> bool:
+        """
+        إرسال تنبيه دخول
         
+        Args:
+            signal: معلومات الإشارة
+        
+        Returns:
+            True إذا تم الإرسال بنجاح
+        """
+        if signal['direction'] == 'BUY':
+            icon = '🔼🟢'  # أخضر
+        else:
+            icon = '🔽🔴'  # أحمر
+        
+        message = f"""
+{icon} <b>دخول {signal['direction']}</b> {icon}
+══════════════════════════════
+
+💱 <b>الزوج:</b> {signal['symbol']}
+💰 <b>السعر:</b> {signal['price']:.5f}
+⏰ <b>الوقت:</b> {signal.get('timestamp', datetime.now()).strftime('%H:%M:%S')}
+
+📊 <b>التحليل:</b>
+{signal['reason']}
+
+🎯 <b>هدف الربح:</b> {signal['take_profit']:.5f}
+🛑 <b>وقف الخسارة:</b> {signal['stop_loss']:.5f}
+
+══════════════════════════════
+🤖 <i>Manus Trading Bot</i>
+"""
         return self.send_message(message)
     
     def _get_signal_icon(self, signal_type: str) -> str:
