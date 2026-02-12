@@ -19,8 +19,8 @@ class ForexDataFetcher:
         """
         تهيئة الاتصال بـ Twelve Data API
         """
-        # API مجاني - 800 طلب يومياً
-        self.api_key = "demo"  # استخدم "demo" للاختبار، أو احصل على مفتاح مجاني من twelvedata.com
+        # Twelve Data Paid Plan
+        self.api_key = config.TWELVE_DATA_API_KEY
         self.base_url = "https://api.twelvedata.com"
     
     def _convert_symbol_format(self, symbol: str) -> str:

@@ -7,6 +7,7 @@ import time
 from datetime import datetime
 import config
 from forex_data_fetcher import ForexDataFetcher
+from data_fetcher_twelve import get_latest_candles_twelve
 from strategy import TradingStrategy
 from telegram_notifier import TelegramNotifier
 from time_filter import is_trading_time

@@ -9,7 +9,10 @@ import pytz
 # 🔐 إعدادات API
 # ═══════════════════════════════════════════════════════════
 
-# Forex API
+# Twelve Data API (الأساسي)
+TWELVE_DATA_API_KEY = "2ea3ab0f4b474b308e414101649ad9e1"
+
+# Forex API (احتياطي)
 FOREX_API_KEY = "bdae26107a2f4d5793894089d1a886be"
 
 # Telegram Bot (للتنبيهات)
