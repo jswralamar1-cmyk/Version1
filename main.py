@@ -24,7 +24,7 @@ def main():
     # تهيئة المكونات
     data_fetcher = ForexDataFetcher()
     strategy = TradingStrategy()
-    notifier = TelegramNotifier(
+    notifier = TelegramNotifier()
         config.TELEGRAM_BOT_TOKEN,
         config.TELEGRAM_CHAT_ID
     )
