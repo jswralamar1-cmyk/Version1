@@ -1,0 +1,4 @@
+pandas==2.2.0
+numpy==1.26.3
+requests==2.31.0
+pytz==2024.1
